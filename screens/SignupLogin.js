@@ -16,24 +16,24 @@ export default class SignupLogin extends Component{
 userLogin = (username, password)=>{
     firebase.auth().signInWithEmailAndPassword(username, password)
     .then(()=>{
-        return Alert("Successfully logged in")
+        return alert("Successfully logged in")
     })
     .catch((error)=>{
         var errorCode = error.code;
         var errorMessage = error.message;
-        return Alert(errorMessage)
+        return alert(errorMessage)
     })
 }
 
 userSignUp = (username,password)=>{
     firebase.auth().createUserWithEmailAndPassword(username,password)
     .then((response)=>{
-        return Alert("User added successfully")
+        return alert("User added successfully")
     })
     .catch(function(error){
         var errorCode = error.code;
         var errorMessage = error.message;
-        return Alert(errorMessage)
+        return alert(errorMessage)
     })
 }
 
