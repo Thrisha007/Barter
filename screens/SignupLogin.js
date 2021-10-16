@@ -9,7 +9,8 @@ export default class SignupLogin extends Component{
         super()
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            confirmPassword: ''
         }
     }
 
@@ -25,9 +26,20 @@ userLogin = (username, password)=>{
     })
 }
 
-userSignUp = (username,password)=>{
+userSignUp = (username,password,confirmPassword)=>{
+  if(password !== confirmPassword){
+      return Alert("The passwords do not match")
+  }
+  else{
     firebase.auth().createUserWithEmailAndPassword(username,password)
     .then((response)=>{
+      db.collection('users').add({
+        first_name:this.state.firstName,
+        last_name:this.state.lastName,
+        mobile_number:this.state.mobileNumber,
+        username:this.state.username,
+        address:this.state.address
+      })
         return alert("User added successfully")
     })
     .catch(function(error){
@@ -36,6 +48,110 @@ userSignUp = (username,password)=>{
         return alert(errorMessage)
     })
 }
+}
+
+showModal = ()=>(
+    <Modal
+      >
+      <View>
+        <ScrollView style={{width:'100%'}}>
+          <KeyboardAvoidingView style={{flex:1,justifyContent:'center', alignItems:'center'}}>
+          <Text
+            style={{justifyContent:'center', alignSelf:'center', fontSize:30,color:'blue',margin:50}}
+            >Registration</Text>
+          <TextInput
+            style={styles.textInput}
+            placeholder ={"First Name"}
+            maxLength ={8}
+            onChangeText={(text)=>{
+              this.setState({
+                firstName: text
+              })
+            }}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder ={"Last Name"}
+            maxLength ={8}
+            onChangeText={(text)=>{
+              this.setState({
+                lastName: text
+              })
+            }}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder ={"Mobile Number"}
+            maxLength ={10}
+            keyboardType={'numeric'}
+            onChangeText={(text)=>{
+              this.setState({
+                mobileNumber: text
+              })
+            }}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder ={"Address"}
+            multiline = {true}
+            onChangeText={(text)=>{
+              this.setState({
+                address: text
+              })
+            }}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder ={"Username"}
+            keyboardType ={'email-address'}
+            onChangeText={(text)=>{
+              this.setState({
+                username: text
+              })
+            }}
+          /><TextInput
+            style={styles.textInput}
+            placeholder ={"Password"}
+            secureTextEntry = {true}
+            onChangeText={(text)=>{
+              this.setState({
+                password: text
+              })
+            }}
+          /><TextInput
+            style={styles.textInput}
+            placeholder ={"Confirm Password"}
+            secureTextEntry = {true}
+            onChangeText={(text)=>{
+              this.setState({
+                confirmPassword: text
+              })
+            }}
+          />
+          <View>
+            <TouchableOpacity
+              style={styles.registerButton}
+              onPress={()=>
+                this.userSignUp(this.state.username, this.state.password, this.state.confirmPassword)
+              }
+            >
+            <Text style={styles.registerButtonText}>Register</Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              //onPress={()=>this.setState({"isVisible":false})}
+            >
+            <Text style={{color:'blue'}}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </View>
+    </Modal>
+  )
+
 
     render(){
         return(
@@ -124,4 +240,35 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         backgroundColor: "pink"
     },
+    textInput:{
+        width:"75%",
+        height:35,
+        alignSelf:'center',
+        borderColor:'#ffab91',
+        borderRadius:10,
+        borderWidth:1,
+        marginTop:20,
+        padding:10
+      },
+      registerButton:{
+        width:200,
+        height:40,
+        alignItems:'center',
+        justifyContent:'center',
+        borderWidth:1,
+        borderRadius:10,
+        marginTop:30
+      },
+      registerButtonText:{
+        color:'#ff5722',
+        fontSize:15,
+        fontWeight:'bold'
+      },
+      cancelButton:{
+        width:200,
+        height:30,
+        justifyContent:'center',
+        alignItems:'center',
+        marginTop:5,
+      },
 })
